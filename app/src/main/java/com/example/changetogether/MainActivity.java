@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavView);
         frameLayout = findViewById(R.id.frameLayout);
         // IDK THIS COMMENT
+        // IDK THIS COMMENT SECOND AZIZ
 
         // Устанавливаем слушатель для BottomNavigationView
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ChangeTogether</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ct">change together</string>
+    <string name="ph">Enter your phone number</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="mobile_phone_number">Mobile Phone Number</string>
+    <string name="send_code">SEND CODE</string>
+</resources>

@@ -9,4 +9,8 @@
     <string name="_3">3</string>
     <string name="mobile_phone_number">Mobile Phone Number</string>
     <string name="send_code">SEND CODE</string>
+    <string name="otp">Enter code sent to your phone number</string>
+    <string name="code">Paste code here</string>
+    <string name="next">NEXT</string>
+    <string name="resend_code">Resend Code</string>
 </resources>

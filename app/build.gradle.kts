@@ -47,3 +47,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation("com.hbb20:ccp:2.5.0")
 }
+
+configurations.all {
+    resolutionStrategy.force("com.android.support:support-annotations:28.0.0")
+}

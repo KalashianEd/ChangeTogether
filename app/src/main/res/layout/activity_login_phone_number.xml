@@ -86,11 +86,13 @@
     </TextView>
 
     <com.hbb20.CountryCodePicker
+        android:id="@+id/login_countrycode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:ccp_contentColor="@color/white"/>
 
     <EditText
+        android:id="@+id/login_mobile_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints="phone"
@@ -109,6 +111,7 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/send_otp_btn"
             android:layout_width="270dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -116,6 +119,7 @@
             android:backgroundTint="@color/orange">
         </Button>
         <ProgressBar
+            android:id="@+id/login_progress_bar"
             android:layout_width="32dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

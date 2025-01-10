@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "233470612270",
+    "project_id": "changetogether25",
+    "storage_bucket": "changetogether25.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233470612270:android:f65409608cf88f2b9ea0bf",
+        "android_client_info": {
+          "package_name": "com.example.changetogether"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsKmQImnUHZgB_Yv7ryk4xjBHY7qgKiE0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

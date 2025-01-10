@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:background="@drawable/gradient_background"
     android:gravity="center"
-    tools:context=".LoginOtpActivity">
+    tools:context=".LoginUsernameActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
             android:layout_height="32dp"
             android:layout_margin="10dp"
             android:background="@drawable/circular_bg"
-            android:backgroundTint="@color/orange">
+            android:backgroundTint="@color/light_gray">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
             android:layout_height="32dp"
             android:layout_margin="10dp"
             android:background="@drawable/circular_bg"
-            android:backgroundTint="@color/light_gray">
+            android:backgroundTint="@color/orange">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -70,14 +70,14 @@
     <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:src="@drawable/password_svgrepo_com"
+        android:src="@drawable/icons8_profile_500"
         tools:ignore="ContentDescription">
 
     </ImageView>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/otp"
+        android:text="@string/enter_your_username"
         android:layout_gravity="center_vertical"
         android:letterSpacing="0.08"
         android:textStyle="bold"
@@ -86,14 +86,13 @@
     </TextView>
 
     <EditText
-        android:id="@+id/login_otp"
+        android:id="@+id/login_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints="phone"
         android:padding="10dp"
-        android:hint="@string/code"
-        android:inputType="number"
-        android:maxLength="6"
+        android:hint="@string/username"
+        android:inputType="phone"
         android:layout_margin="10dp"
         android:background="@drawable/edit_text_rounded_corner"
         android:elevation="5dp">
@@ -106,11 +105,11 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/login_next_btn"
+            android:id="@+id/login_finish"
             android:layout_width="270dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/next"
+            android:text="@string/finish"
             android:backgroundTint="@color/orange">
         </Button>
         <ProgressBar
@@ -120,16 +119,6 @@
             android:layout_gravity="center"
             android:indeterminateTint="@color/orange"/>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/resend_otp_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:text="@string/resend_code"
-        android:textColor="@color/white"
-        android:textSize="20sp" />
 
 
 

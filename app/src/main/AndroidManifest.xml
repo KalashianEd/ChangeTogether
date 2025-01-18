@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -15,10 +19,6 @@
         <activity
             android:name=".LoginUsernameActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.login.LoginUsernameActivity"
-            android:exported="false"
-            android:label="@string/title_activity_login_username" />
         <activity
             android:name=".LoginOtpActivity"
             android:exported="false" />

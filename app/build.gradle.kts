@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.changetogether"
-    compileSdk = 35 // Используем стабильную версию SDK
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.changetogether"
@@ -27,13 +27,16 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         viewBinding = true
     }
@@ -48,12 +51,16 @@ dependencies {
     implementation(libs.annotation)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom.v3223))
+    implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.ccp)
-    implementation(libs.firebase.bom)
 }
 
 configurations.all {

@@ -29,7 +29,5 @@ public class LoginOtpActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), phoneNumber, Toast.LENGTH_LONG).show();
 
 
-        Map<String,String> data = new HashMap<>();
-        FirebaseFirestore.getInstance().collection("test").add(data);
     }
 }

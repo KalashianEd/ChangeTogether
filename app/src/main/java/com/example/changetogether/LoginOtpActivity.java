@@ -1,5 +1,6 @@
 package com.example.changetogether;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,12 +12,17 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import utils.AndroidUtil;
@@ -47,9 +53,40 @@ public class LoginOtpActivity extends AppCompatActivity {
 
         phoneNumber = getIntent().getStringExtra("phone");
         SendOtp(phoneNumber, false);
+
+        nextButton.setOnClickListener(view -> {
+            String enteredOtp = otpinput.getText().toString();
+            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationCode, enteredOtp);
+            SignIn(credential);
+            setInProgress(true);
+            mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    setInProgress(false);
+
+                    if (task.isSuccessful()) {
+                        Intent intent = new Intent(LoginOtpActivity.this, LoginUsernameActivity.class);
+                        intent.putExtra("phone", phoneNumber);
+                        startActivity(intent);
+                        // TODO: Перейти в главный экран
+                    } else {
+                        AndroidUtil.showToast(getApplicationContext(), "Login failed: " + task.getException().getMessage());
+                    }
+
+                }
+            });
+
+
+        });
+
+        resendOtpTextView.setOnClickListener(view -> {
+            SendOtp(phoneNumber, true);
+        });
+
     }
 
     void SendOtp(String phoneNumber, boolean isResend) {
+        startResendTimer();
         setInProgress(true);
 
         PhoneAuthOptions.Builder builder =
@@ -108,5 +145,28 @@ public class LoginOtpActivity extends AppCompatActivity {
                         AndroidUtil.showToast(getApplicationContext(), "Login failed: " + task.getException().getMessage());
                     }
                 });
+
     }
+
+    void startResendTimer() {
+        resendOtpTextView.setEnabled(false);
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                timeoutSeconds--;
+                resendOtpTextView.setText("Resend code in " + timeoutSeconds + " seconds");
+                if(timeoutSeconds<=0){
+                    timeoutSeconds = 60L;
+                    timer.cancel();
+                    runOnUiThread(() ->{
+                        resendOtpTextView.setEnabled(true);
+                    });
+                }
+
+
+            }
+        }, 0, 1000);
+    }
+
 }

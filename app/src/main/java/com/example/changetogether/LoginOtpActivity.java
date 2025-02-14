@@ -34,7 +34,7 @@ public class LoginOtpActivity extends AppCompatActivity {
     String verificationCode;
     PhoneAuthProvider.ForceResendingToken resendingToken;
 
-    EditText otpinput;
+    EditText otpinput;//ddddddd
     Button nextButton;
     ProgressBar progressBar;
     TextView resendOtpTextView;

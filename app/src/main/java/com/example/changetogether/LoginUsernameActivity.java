@@ -15,7 +15,10 @@ import com.example.changetogether.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import utils.FirebaseUtil;
 
@@ -37,14 +40,14 @@ public class LoginUsernameActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.login_finish);
         progressBar = findViewById(R.id.login_progress_bar);
 
-        phoneNumber = getIntent().getStringExtra("phone"); // Теперь phoneNumber сохраняется в поле класса
+        phoneNumber = getIntent().getStringExtra("phone");
         getUsername();
 
         nextButton.setOnClickListener(view -> setUsername());
     }
 
     void setUsername() {
-        String username = usernameInput.getText().toString();
+        String username = usernameInput.getText().toString().trim();
         if (username.isEmpty() || username.length() < 3) {
             usernameInput.setError("Username is less than 3 characters");
             return;
@@ -58,25 +61,54 @@ public class LoginUsernameActivity extends AppCompatActivity {
             userModel = new UserModel(phoneNumber, username, Timestamp.now());
         }
 
-        FirebaseUtil.currentUserDetails().set(userModel).addOnCompleteListener(task -> {
+        DocumentReference userRef = FirebaseUtil.currentUserDetails();
+        if (userRef == null) {
+            setInProgress(false);
+            usernameInput.setError("Ошибка получения пользователя");
+            return;
+        }
+
+        userRef.set(userModel).addOnCompleteListener(task -> {
             setInProgress(false);
             if (task.isSuccessful()) {
                 Intent intent = new Intent(LoginUsernameActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+            } else {
+                Exception e = task.getException();
+                if (e != null) {
+                    e.printStackTrace();
+                    usernameInput.setError("Ошибка сохранения: " + e.getMessage());
+                }
             }
         });
     }
 
     void getUsername() {
         setInProgress(true);
-        FirebaseUtil.currentUserDetails().get().addOnCompleteListener(task -> {
+
+        DocumentReference userRef = FirebaseUtil.currentUserDetails();
+        if (userRef == null) {
+            setInProgress(false);
+            usernameInput.setError("Ошибка получения пользователя");
+            return;
+        }
+
+        userRef.get().addOnCompleteListener(task -> {
             setInProgress(false);
             if (task.isSuccessful()) {
-                userModel = task.getResult().toObject(UserModel.class);
-                if (userModel != null) {
-                    usernameInput.setText(userModel.getUsername());
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    userModel = document.toObject(UserModel.class);
+                    if (userModel != null) {
+                        usernameInput.setText(userModel.getUsername());
+                    }
+                } else {
+                    System.out.println("Документ не найден!");
                 }
+            } else {
+                Exception e = task.getException();
+                if (e != null) e.printStackTrace();
             }
         });
     }

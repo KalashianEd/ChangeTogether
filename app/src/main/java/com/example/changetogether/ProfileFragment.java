@@ -33,7 +33,7 @@ public class ProfileFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = mAuth.getCurrentUser(); //heyhey
         if (currentUser != null) {
             String userId = currentUser.getUid();
             String phoneNumber = currentUser.getPhoneNumber();

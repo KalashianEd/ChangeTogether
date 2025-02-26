@@ -21,30 +21,22 @@ public class LoginPhoneNumberActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Устанавливаем макет до обращения к элементам интерфейса
         setContentView(R.layout.activity_login_phone_number);
 
-        // Инициализация элементов интерфейса
         countryCodePicker = findViewById(R.id.login_countrycode);
         phoneInput = findViewById(R.id.login_mobile_number);
         nextBtn = findViewById(R.id.send_otp_btn);
         progressBar = findViewById(R.id.login_progress_bar);
 
-        // Скрываем ProgressBar
         progressBar.setVisibility(View.GONE);
-
-        // Регистрация CountryCodePicker
         countryCodePicker.registerCarrierNumberEditText(phoneInput);
 
-        // Обработчик нажатия кнопки
         nextBtn.setOnClickListener(v -> {
             if (!countryCodePicker.isValidFullNumber()) {
-                phoneInput.setError("Number is Invalid");
+                phoneInput.setError("Номер телефона недействителен");
                 return;
             }
 
-            // Переход на экран LoginOtpActivity
             Intent intent = new Intent(LoginPhoneNumberActivity.this, LoginOtpActivity.class);
             intent.putExtra("phone", countryCodePicker.getFullNumberWithPlus());
             startActivity(intent);

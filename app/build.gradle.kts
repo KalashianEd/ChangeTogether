@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
     implementation("com.google.firebase:firebase-auth")
+    implementation("com.android.billingclient:billing:6.0.1")
 
     // Firebase
     implementation(libs.firebase.auth)

@@ -2,7 +2,6 @@ package com.example.changetogether;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -13,23 +12,31 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private FrameLayout frameLayout;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mAuth = FirebaseAuth.getInstance();
         bottomNavigationView = findViewById(R.id.bottomNavView);
         frameLayout = findViewById(R.id.frameLayout);
-        // IDK THIS COMMENT
-        // IDK THIS COMMENT SECOND AZIZ
-        // THIRD CHANGE /testing github/
 
-        // Устанавливаем слушатель для BottomNavigationView
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            startActivity(new Intent(this, LoginPhoneNumberActivity.class));
+            finish();
+            return;
+        }
+
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -48,21 +55,21 @@ public class MainActivity extends AppCompatActivity {
 
                 if (selectedFragment != null) {
                     loadFragment(selectedFragment);
-                    return true; // Важно вернуть true, чтобы система знала, что нажатие обработано
+                    return true;
                 }
 
                 return false;
             }
         });
 
-        // Загружаем начальный фрагмент
         loadFragment(new HomeFragment());
     }
 
     private void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frameLayout, fragment); // Заменяем, а не добавляем
+        fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit();
     }
 }
+

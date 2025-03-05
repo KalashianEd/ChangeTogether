@@ -3,25 +3,26 @@ package com.example.changetogether.model;
 import com.google.firebase.Timestamp;
 
 public class UserModel {
-    private String phone;
+    private String email; // Заменяем phone на email
     private String username;
     private Timestamp createdTimestamp;
 
     public UserModel() {
+        // Пустой конструктор для Firestore
     }
 
-    public UserModel(String phone, String username, Timestamp createdTimestamp) {
-        this.phone = phone;
+    public UserModel(String email, String username, Timestamp createdTimestamp) {
+        this.email = email; // Используем email вместо phone
         this.username = username;
         this.createdTimestamp = createdTimestamp;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUsername() {

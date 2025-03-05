@@ -20,7 +20,7 @@ public class LoginUsernameActivity extends AppCompatActivity {
     EditText usernameInput;
     Button nextButton;
     ProgressBar progressBar;
-    String phoneNumber;
+    String email; // Заменяем phoneNumber на email
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class LoginUsernameActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.login_finish);
         progressBar = findViewById(R.id.login_progress_bar);
 
-        phoneNumber = getIntent().getStringExtra("phone");
+        email = getIntent().getStringExtra("email"); // Получаем email из предыдущей активности
 
         nextButton.setOnClickListener(view -> setUsername());
     }
@@ -49,7 +49,8 @@ public class LoginUsernameActivity extends AppCompatActivity {
                 .collection("users")
                 .document(FirebaseAuth.getInstance().getUid());
 
-        userRef.set(new UserModel(phoneNumber, username, Timestamp.now())).addOnCompleteListener(task -> {
+        // Сохраняем email вместо phoneNumber
+        userRef.set(new UserModel(email, username, Timestamp.now())).addOnCompleteListener(task -> {
             setInProgress(false);
             if (task.isSuccessful()) {
                 Intent intent = new Intent(LoginUsernameActivity.this, MainActivity.class);

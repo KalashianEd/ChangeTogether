@@ -1,6 +1,7 @@
 package com.example.changetogether;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,29 +12,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthOptions;
-import com.google.firebase.auth.PhoneAuthProvider;
-
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
+import com.google.firebase.auth.FirebaseUser;
 
 import utils.AndroidUtil;
 
 public class LoginOtpActivity extends AppCompatActivity {
 
-    String phoneNumber;
-    String verificationCode;
-    PhoneAuthProvider.ForceResendingToken resendingToken;
-
+    String email;
     EditText otpInput;
     Button nextButton;
     ProgressBar progressBar;
     TextView resendOtpTextView;
+
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
@@ -46,87 +40,71 @@ public class LoginOtpActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.login_progress_bar);
         resendOtpTextView = findViewById(R.id.resend_otp_textview);
 
-        phoneNumber = getIntent().getStringExtra("phone");
-        sendOtp(phoneNumber, false);
+        email = getIntent().getStringExtra("email");
 
-        nextButton.setOnClickListener(view -> {
-            String enteredOtp = otpInput.getText().toString().trim();
-            if (enteredOtp.isEmpty() || enteredOtp.length() < 6) {
-                otpInput.setError("Введите правильный OTP");
-                return;
-            }
+        sendSignInLink(email);
 
-            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationCode, enteredOtp);
-            signIn(credential);
-        });
+        // Проверяем, открыто ли приложение через ссылку
+        if (isSignInWithEmailLink(FirebaseAuth.getInstance(), getIntent())) {
+            handleSignInWithEmailLink();
+        }
 
-        resendOtpTextView.setOnClickListener(view -> sendOtp(phoneNumber, true));
+        resendOtpTextView.setOnClickListener(view -> sendSignInLink(email));
     }
 
-    void sendOtp(String phoneNumber, boolean isResend) {
-        startResendTimer();
+    private void sendSignInLink(String email) {
         setInProgress(true);
 
-        PhoneAuthOptions.Builder builder =
-                PhoneAuthOptions.newBuilder(mAuth)
-                        .setPhoneNumber(phoneNumber)
-                        .setTimeout(60L, TimeUnit.SECONDS)
-                        .setActivity(this)
-                        .setCallbacks(new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                            @Override
-                            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-                                setInProgress(false);
-                            }
+        ActionCodeSettings actionCodeSettings = ActionCodeSettings.newBuilder()
+                .setUrl("https://your-app-url.com") // URL, куда будет перенаправлен пользователь
+                .setHandleCodeInApp(true) // Указывает, что ссылка должна обрабатываться внутри приложения
+                .setAndroidPackageName(
+                        "com.example.changetogether", // Ваш package name
+                        true, // Установлено ли приложение
+                        null) // Минимальная версия приложения
+                .build();
 
-                            @Override
-                            public void onVerificationFailed(@NonNull FirebaseException e) {
-                                AndroidUtil.showToast(getApplicationContext(), "Ошибка верификации: " + e.getMessage());
-                                setInProgress(false);
-                            }
+        mAuth.sendSignInLinkToEmail(email, actionCodeSettings)
+                .addOnCompleteListener(task -> {
+                    setInProgress(false);
+                    if (task.isSuccessful()) {
+                        AndroidUtil.showToast(getApplicationContext(), "Ссылка отправлена на email: " + email);
+                    } else {
+                        AndroidUtil.showToast(getApplicationContext(), "Ошибка отправки ссылки: " + task.getException().getMessage());
+                    }
+                });
+    }
 
-                            @Override
-                            public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken token) {
-                                verificationCode = s;
-                                resendingToken = token;
-                                AndroidUtil.showToast(getApplicationContext(), "OTP отправлен");
-                                setInProgress(false);
-                            }
-                        });
-
-        if (isResend && resendingToken != null) {
-            builder.setForceResendingToken(resendingToken);
+    private boolean isSignInWithEmailLink(FirebaseAuth auth, Intent intent) {
+        if (intent != null && intent.getData() != null) {
+            String link = intent.getData().toString();
+            return auth.isSignInWithEmailLink(link);
         }
-        PhoneAuthProvider.verifyPhoneNumber(builder.build());
+        return false;
+    }
+
+    private void handleSignInWithEmailLink() {
+        Uri deepLink = getIntent().getData();
+        if (deepLink != null) {
+            mAuth.signInWithEmailLink(email, deepLink.toString())
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = task.getResult().getUser();
+                            AndroidUtil.showToast(getApplicationContext(), "Вход выполнен успешно!");
+
+                            Intent intent = new Intent(LoginOtpActivity.this, LoginUsernameActivity.class);
+                            intent.putExtra("email", email);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            AndroidUtil.showToast(getApplicationContext(), "Ошибка входа: " + task.getException().getMessage());
+                        }
+                    });
+        }
     }
 
     void setInProgress(boolean inProgress) {
         progressBar.setVisibility(inProgress ? View.VISIBLE : View.GONE);
         nextButton.setVisibility(inProgress ? View.GONE : View.VISIBLE);
-    }
-
-    void signIn(PhoneAuthCredential phoneAuthCredential) {
-        setInProgress(true);
-        mAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(task -> {
-            setInProgress(false);
-            if (task.isSuccessful()) {
-                Intent intent = new Intent(LoginOtpActivity.this, LoginUsernameActivity.class);
-                intent.putExtra("phone", phoneNumber);
-                startActivity(intent);
-                finish();
-            } else {
-                AndroidUtil.showToast(getApplicationContext(), "Ошибка входа: " + task.getException().getMessage());
-            }
-        });
-    }
-
-    void startResendTimer() {
-        resendOtpTextView.setEnabled(false);
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(() -> resendOtpTextView.setEnabled(true));
-            }
-        }, 60000);
     }
 }

@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@drawable/gradient_background"
     tools:context=".HomeFragment">
-    <!-- TODO: Update blank fragment layout -->
+
+    <ImageButton
+        android:id="@+id/close_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:background="@null"
+        android:scaleType="centerInside"
+        android:src="@android:drawable/ic_input_add"
+        app:tint="@android:color/white" />
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="HOME FRAGMENT" />
+        android:id="@+id/add_post_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="72dp"
+        android:text="Добавить пост"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:layout_gravity="top|end" />
+
 </FrameLayout>

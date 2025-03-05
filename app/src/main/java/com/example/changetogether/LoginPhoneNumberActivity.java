@@ -9,12 +9,9 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.hbb20.CountryCodePicker;
-
 public class LoginPhoneNumberActivity extends AppCompatActivity {
 
-    CountryCodePicker countryCodePicker;
-    EditText phoneInput;
+    EditText emailInput;
     Button nextBtn;
     ProgressBar progressBar;
 
@@ -23,22 +20,21 @@ public class LoginPhoneNumberActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_phone_number);
 
-        countryCodePicker = findViewById(R.id.login_countrycode);
-        phoneInput = findViewById(R.id.login_mobile_number);
+        emailInput = findViewById(R.id.login_mobile_number); // Переименуем поле ввода
         nextBtn = findViewById(R.id.send_otp_btn);
         progressBar = findViewById(R.id.login_progress_bar);
 
         progressBar.setVisibility(View.GONE);
-        countryCodePicker.registerCarrierNumberEditText(phoneInput);
 
         nextBtn.setOnClickListener(v -> {
-            if (!countryCodePicker.isValidFullNumber()) {
-                phoneInput.setError("Номер телефона недействителен");
+            String email = emailInput.getText().toString().trim();
+            if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                emailInput.setError("Введите корректный email");
                 return;
             }
 
             Intent intent = new Intent(LoginPhoneNumberActivity.this, LoginOtpActivity.class);
-            intent.putExtra("phone", countryCodePicker.getFullNumberWithPlus());
+            intent.putExtra("email", email); // Передаем email
             startActivity(intent);
         });
     }

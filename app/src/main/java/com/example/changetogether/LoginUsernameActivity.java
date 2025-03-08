@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,13 +15,14 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class LoginUsernameActivity extends AppCompatActivity {
 
     EditText usernameInput;
     Button nextButton;
     ProgressBar progressBar;
-    String email; // Заменяем phoneNumber на email
+    String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +33,22 @@ public class LoginUsernameActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.login_finish);
         progressBar = findViewById(R.id.login_progress_bar);
 
-        email = getIntent().getStringExtra("email"); // Получаем email из предыдущей активности
+        email = getIntent().getStringExtra("email");
+
+        // Check if email is null or empty
+        if (email == null || email.isEmpty()) {
+            Toast.makeText(this, "Email is missing!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         nextButton.setOnClickListener(view -> setUsername());
     }
 
     void setUsername() {
         String username = usernameInput.getText().toString().trim();
+
+        // Validate username
         if (username.isEmpty() || username.length() < 3) {
             usernameInput.setError("Имя должно быть не менее 3 символов");
             return;
@@ -45,19 +56,65 @@ public class LoginUsernameActivity extends AppCompatActivity {
 
         setInProgress(true);
 
-        DocumentReference userRef = FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(FirebaseAuth.getInstance().getUid());
-
-        // Сохраняем email вместо phoneNumber
-        userRef.set(new UserModel(email, username, Timestamp.now())).addOnCompleteListener(task -> {
+        // Getting current user UID
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() == null) {
+            // If no user is authenticated, show an error and return
             setInProgress(false);
+            Toast.makeText(this, "User is not authenticated. Please log in.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String userId = mAuth.getCurrentUser().getUid();
+
+        // Check if the user exists in Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userRef = db.collection("users").document(userId);
+
+        userRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Intent intent = new Intent(LoginUsernameActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                if (task.getResult().exists()) {
+                    // If the user exists, update the username
+                    updateUsername(userRef, username);
+                } else {
+                    // If the user does not exist, create a new user document
+                    createNewUser(userRef, username);
+                }
+            } else {
+                setInProgress(false);
+                Toast.makeText(this, "Failed to check user existence.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void updateUsername(DocumentReference userRef, String username) {
+        userRef.update("username", username)
+                .addOnCompleteListener(task -> {
+                    setInProgress(false);
+                    if (task.isSuccessful()) {
+                        navigateToMain();
+                    } else {
+                        Toast.makeText(this, "Failed to update username.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void createNewUser(DocumentReference userRef, String username) {
+        UserModel userModel = new UserModel(email, username, Timestamp.now());
+        userRef.set(userModel).addOnCompleteListener(task -> {
+            setInProgress(false);
+            if (task.isSuccessful()) {
+                navigateToMain();
+            } else {
+                Toast.makeText(this, "Failed to create user.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void navigateToMain() {
+        Intent intent = new Intent(LoginUsernameActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     void setInProgress(boolean inProgress) {

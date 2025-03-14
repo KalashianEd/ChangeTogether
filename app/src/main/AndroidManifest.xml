@@ -15,25 +15,38 @@
         android:theme="@style/Theme.ChangeTogether"
         tools:targetApi="31">
 
+        <!-- Define LoginActivity -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+
+        <!-- Define AddpostFragment -->
         <activity
             android:name=".AddpostFragment"
             android:exported="false" />
 
+        <!-- Define LoginUsernameActivity -->
         <activity
             android:name=".LoginUsernameActivity"
             android:exported="false" />
 
+        <!-- Define LoginOtpActivity -->
         <activity
             android:name=".LoginOtpActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="changetogether.page.link" android:scheme="https" />
+
+                <data
+                    android:host="changetogether.page.link"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
 
+        <!-- Define SplashActivity -->
         <activity
             android:name=".SplashActivity"
             android:exported="true">
@@ -43,14 +56,20 @@
             </intent-filter>
         </activity>
 
+        <!-- Define LoginPhoneNumberActivity -->
         <activity
             android:name=".LoginPhoneNumberActivity"
             android:exported="false" />
 
+        <!-- Define MainActivity -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />
 
+        <!-- Define CreatePasswordActivity -->
+        <activity
+            android:name=".CreatePasswordActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

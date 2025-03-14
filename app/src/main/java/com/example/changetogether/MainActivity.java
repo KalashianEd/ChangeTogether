@@ -1,6 +1,7 @@
 package com.example.changetogether;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -17,6 +18,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String PREFS_NAME = "LoginPrefs";
+    private static final String KEY_STAY_LOGGED_IN = "stayLoggedIn";
+
     private BottomNavigationView bottomNavigationView;
     private FrameLayout frameLayout;
     private FirebaseAuth mAuth;
@@ -30,9 +34,13 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavView);
         frameLayout = findViewById(R.id.frameLayout);
 
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        boolean stayLoggedIn = sharedPreferences.getBoolean(KEY_STAY_LOGGED_IN, false);
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            startActivity(new Intent(this, LoginPhoneNumberActivity.class));
+        if (currentUser == null && !stayLoggedIn) {
+            // User is not logged in or "stay logged in" is not checked, redirect to login activity
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
@@ -72,4 +80,3 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 }
-

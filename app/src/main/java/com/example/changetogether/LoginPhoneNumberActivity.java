@@ -61,19 +61,16 @@ public class LoginPhoneNumberActivity extends AppCompatActivity {
             // Show progress bar
             progressBar.setVisibility(View.VISIBLE);
 
-            // Create a new user in Firebase Authentication
-            createUserInFirebase(email);
+            // Send verification email
+            sendVerificationEmail(email);
         });
     }
 
     /**
-     * Creates a new user in Firebase Authentication.
+     * Sends a verification email.
      */
-    private void createUserInFirebase(String email) {
-        // Use a temporary password (or enable email-only sign-in in Firebase Console)
-        String temporaryPassword = "TempPassword123!";
-
-        mAuth.createUserWithEmailAndPassword(email, temporaryPassword)
+    private void sendVerificationEmail(String email) {
+        mAuth.createUserWithEmailAndPassword(email, "TempPassword123!")
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -85,7 +82,24 @@ public class LoginPhoneNumberActivity extends AppCompatActivity {
 
                             if (user != null) {
                                 // Send verification email
-                                sendVerificationEmail(user);
+                                user.sendEmailVerification()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Log.d("LoginPhoneNumberActivity", "Verification email sent.");
+                                                    Toast.makeText(LoginPhoneNumberActivity.this, "Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
+
+                                                    // Navigate to OTP activity
+                                                    Intent intent = new Intent(LoginPhoneNumberActivity.this, LoginOtpActivity.class);
+                                                    intent.putExtra("email", user.getEmail());
+                                                    startActivity(intent);
+                                                } else {
+                                                    Log.e("LoginPhoneNumberActivity", "Failed to send verification email", task.getException());
+                                                    Toast.makeText(LoginPhoneNumberActivity.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
                             } else {
                                 Log.e("LoginPhoneNumberActivity", "User is null");
                                 Toast.makeText(LoginPhoneNumberActivity.this, "Failed to create user.", Toast.LENGTH_SHORT).show();
@@ -93,30 +107,6 @@ public class LoginPhoneNumberActivity extends AppCompatActivity {
                         } else {
                             Log.e("LoginPhoneNumberActivity", "Failed to create user", task.getException());
                             Toast.makeText(LoginPhoneNumberActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-    /**
-     * Sends a verification email to the user.
-     */
-    private void sendVerificationEmail(FirebaseUser user) {
-        user.sendEmailVerification()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("LoginPhoneNumberActivity", "Verification email sent.");
-                            Toast.makeText(LoginPhoneNumberActivity.this, "Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
-
-                            // Navigate to OTP activity
-                            Intent intent = new Intent(LoginPhoneNumberActivity.this, LoginOtpActivity.class);
-                            intent.putExtra("email", user.getEmail());
-                            startActivity(intent);
-                        } else {
-                            Log.e("LoginPhoneNumberActivity", "Failed to send verification email", task.getException());
-                            Toast.makeText(LoginPhoneNumberActivity.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

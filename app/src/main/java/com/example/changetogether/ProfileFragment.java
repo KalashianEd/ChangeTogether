@@ -17,7 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView greetingTextView, registrationNumberTextView, phoneTextView;
+    private TextView greetingTextView, emailTextView, usernameTextView;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -27,27 +27,26 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         greetingTextView = view.findViewById(R.id.greetingTextView);
-        registrationNumberTextView = view.findViewById(R.id.registrationNumberTextView);
-        phoneTextView = view.findViewById(R.id.phoneTextView);
+        emailTextView = view.findViewById(R.id.emailTextView);
+        usernameTextView = view.findViewById(R.id.usernameTextView);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        FirebaseUser currentUser = mAuth.getCurrentUser(); //heyhey
+        FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             String userId = currentUser.getUid();
-            String phoneNumber = currentUser.getPhoneNumber();
+            String email = currentUser.getEmail();
 
-            phoneTextView.setText("Ваш номер: " + (phoneNumber != null ? phoneNumber : "Не указан"));
+            emailTextView.setText("Your email: " + (email != null ? email : "Not specified"));
 
             DocumentReference userRef = db.collection("users").document(userId);
             userRef.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     String username = documentSnapshot.getString("username");
-                    Long registrationNumber = documentSnapshot.getLong("registrationNumber");
 
-                    greetingTextView.setText("Здравствуйте, " + (username != null ? username : "Пользователь") + "!");
-                    registrationNumberTextView.setText("Номер регистрации: " + (registrationNumber != null ? registrationNumber : "Не указан"));
+                    greetingTextView.setText("Hello, " + (username != null ? username : "User") + "!");
+                    usernameTextView.setText("Your username: " + (username != null ? username : "Not specified"));
                 }
             });
         }

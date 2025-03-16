@@ -11,7 +11,7 @@
         android:id="@+id/greetingTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Здравствуйте!"
+        android:text="Hello!"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"
@@ -19,25 +19,24 @@
 
     <TextView
         android:textColor="@color/white"
-        android:layout_marginTop="35dp"
-        android:id="@+id/registrationNumberTextView"
+        android:layout_marginTop="100dp"
+        android:id="@+id/emailTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Номер регистрации: "
+        android:text="Your email: "
         android:textSize="18sp"
         android:layout_gravity="center_horizontal"
         android:paddingTop="10dp" />
 
     <TextView
         android:textColor="@color/white"
-        android:id="@+id/phoneTextView"
+        android:layout_marginTop="35dp"
+        android:id="@+id/usernameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:text="Ваш номер: "
+        android:text="Your username: "
         android:textSize="18sp"
         android:layout_gravity="center_horizontal"
         android:paddingTop="10dp" />
-
 
 </FrameLayout>

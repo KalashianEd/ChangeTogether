@@ -72,8 +72,9 @@ public class CreatePasswordActivity extends AppCompatActivity {
                                 Log.d("CreatePasswordActivity", "Password created successfully.");
                                 Toast.makeText(CreatePasswordActivity.this, "Password created successfully.", Toast.LENGTH_SHORT).show();
 
-                                // Navigate to main activity
-                                Intent intent = new Intent(CreatePasswordActivity.this, MainActivity.class);
+                                // Navigate to username activity
+                                Intent intent = new Intent(CreatePasswordActivity.this, LoginUsernameActivity.class);
+                                intent.putExtra("email", user.getEmail());
                                 startActivity(intent);
                                 finish();
                             } else {

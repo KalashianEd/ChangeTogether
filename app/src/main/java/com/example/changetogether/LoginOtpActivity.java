@@ -74,8 +74,8 @@ public class LoginOtpActivity extends AppCompatActivity {
                     if (task.isSuccessful() && user.isEmailVerified()) {
                         Toast.makeText(LoginOtpActivity.this, "Email verified!", Toast.LENGTH_SHORT).show();
 
-                        // Navigate to the next activity (e.g., username setup)
-                        Intent intent = new Intent(LoginOtpActivity.this, LoginUsernameActivity.class);
+                        // Navigate to the create password activity
+                        Intent intent = new Intent(LoginOtpActivity.this, CreatePasswordActivity.class);
                         intent.putExtra("email", email);
                         startActivity(intent);
                         finish();
